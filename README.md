@@ -1,6 +1,6 @@
 # Flow Builder - Editor Visual para Bot Controller
 
-Un editor visual avanzado drag & drop para crear y modificar flujos conversacionales JSON compatibles con Yumpii Bot Controller.
+Un editor visual avanzado drag & drop para crear y modificar flujos conversacionales JSON compatibles con Bot Controller.
 
 ## 🚀 Características Principales
 
@@ -88,7 +88,7 @@ npm run dev
 2. **Conectar Flujo**: Arrastra desde los conectores para crear transiciones
 3. **Configurar Contenido**: Selecciona un nodo para editar sus propiedades
 4. **Agregar Transiciones**: Define las reglas de navegación entre nodos
-5. **Exportar**: Descarga el JSON compatible con Yumpii Bot Controller
+5. **Exportar**: Descarga el JSON compatible con  Bot Controller
 
 ### 🔍 **Usando la Búsqueda**
 
@@ -204,9 +204,9 @@ El botón "Limpiar" y la función de importar eliminan todo:
 - ⏰ Configuraciones de horarios de negocio
 - 💾 Datos guardados en localStorage
 
-## 📊 **Formato de Salida (Yumpii JSON)**
+## 📊 **Formato de Salida ( JSON)**
 
-El editor genera JSON compatible con Yumpii Bot Controller:
+El editor genera JSON compatible con  Bot Controller:
 
 ```json
 {
@@ -340,6 +340,6 @@ Este proyecto está bajo la licencia MIT - ver el archivo LICENSE para detalles.
 
 ---
 
-**Desarrollado con ❤️ para Yumpii Bot Controller** 🤖✨
+**Desarrollado con ❤️ para  Bot Controller** 🤖✨
 
 **Made by ErTavo** © 2025
