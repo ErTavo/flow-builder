@@ -19,8 +19,8 @@ export interface YumpiiState {
 }
 
 export interface Content {
-  type: 'text' | 'button' | 'image' | 'audio' | 'video' | 'document';
-  value: TextValue | ButtonValue | MediaValue | DocumentValue;
+  type: 'text' | 'button' | 'url_button' | 'image' | 'audio' | 'video' | 'document' | 'list';
+  value: TextValue | ButtonValue | UrlButtonValue | MediaValue | DocumentValue | ListValue;
   caption?: string;
 }
 
@@ -37,11 +37,24 @@ export interface ButtonValue {
   buttons: ButtonOption[];
   bodyText?: string;
   footerText?: string;
+  caption?: string;
 }
 
 export interface ButtonOption {
   id: string;
   title: string;
+}
+
+export interface UrlButtonValue {
+  header?: {
+    type: string;
+    text: string;
+    url: string;
+  };
+  url: string;
+  label: string;
+  bodyText?: string;
+  footerText?: string;
 }
 
 export interface MediaValue {
@@ -53,6 +66,29 @@ export interface DocumentValue {
   url: string;
   caption?: string;
   filename?: string;
+}
+
+export interface ListValue {
+  sections: ListSection[];
+  header?: {
+    type: string;
+    text: string;
+  };
+  bodyText: string;
+  footerText?: string;
+  buttonText: string;
+}
+
+export interface ListSection {
+  id: string;
+  title: string;
+  rows: ListRow[];
+}
+
+export interface ListRow {
+  id: string;
+  title: string;
+  description?: string;
 }
 
 export interface YumpiiTransition {
@@ -122,6 +158,7 @@ export interface EditorNodeData extends Record<string, unknown> {
   transition_delay?: number;
   isEntry?: boolean;
   variable_replace?: Record<string, string | number | boolean>;
+  highlighted?: boolean;
 }
 
 export interface EditorFlow {

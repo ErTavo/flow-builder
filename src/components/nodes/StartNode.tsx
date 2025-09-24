@@ -10,14 +10,28 @@ interface StartNodeProps {
 }
 
 export const StartNode: React.FC<StartNodeProps> = ({ data, selected }) => {
+  const isHighlighted = data.highlighted;
+  
   return (
     <Card 
       sx={{ 
         minWidth: 200,
-        boxShadow: selected ? 4 : 2,
-        border: selected ? 2 : 1,
-        borderColor: selected ? 'primary.main' : 'divider',
+        boxShadow: isHighlighted ? 6 : (selected ? 4 : 2),
+        border: isHighlighted ? 3 : (selected ? 2 : 1),
+        borderColor: isHighlighted ? '#ff5722' : (selected ? 'primary.main' : 'divider'),
         background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+        animation: isHighlighted ? 'pulse 1.5s ease-in-out infinite' : 'none',
+        '@keyframes pulse': {
+          '0%': {
+            boxShadow: `0 0 0 0 rgba(255, 87, 34, 0.7)`,
+          },
+          '70%': {
+            boxShadow: `0 0 0 10px rgba(255, 87, 34, 0)`,
+          },
+          '100%': {
+            boxShadow: `0 0 0 0 rgba(255, 87, 34, 0)`,
+          },
+        },
       }}
     >
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>

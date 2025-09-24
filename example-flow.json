@@ -1,0 +1,680 @@
+{
+  "structure": {
+    "entry": "init",
+    "states": [
+      {
+        "key": "init",
+        "content": [],
+        "transitions": [
+          {
+            "type": "auto",
+            "value": "",
+            "next": "ask-first-name",
+            "delay": 0
+          }
+        ],
+        "transition_delay": 0
+      },
+      {
+        "key": "menu",
+        "content": [
+          {
+            "type": "list",
+            "value": {
+              "sections": [
+                {
+                  "id": "menu Cayala",
+                  "rows": [
+                    {
+                      "id": "75779787-e01d-42f1-8fd1-05eb16181c95",
+                      "title": "Servicio al cliente",
+                      "description": ""
+                    },
+                    {
+                      "id": "58a37f0e-d8c6-4563-afc5-b3db99ef0625",
+                      "title": "Reporte de pago",
+                      "description": ""
+                    },
+                    {
+                      "id": "3970f4c2-5c04-4686-986a-c818171c61f6",
+                      "title": "Ventas Inmobiliarias",
+                      "description": ""
+                    },
+                    {
+                      "id": "292d37d4-ffaa-4d64-82e9-55aec692b227",
+                      "title": "Cayalá studios",
+                      "description": ""
+                    }
+                  ]
+                }
+              ],
+              "header": {
+                "url": "",
+                "text": "",
+                "type": "text"
+              },
+              "bodyText": "Escoge las siguientes opciones:",
+              "footerText": "",
+              "buttonText": "Ver opciones"
+            },
+            "caption": ""
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^(servicio al cliente|servicio|al|cliente|Servicio al cliente)$",
+            "next": "menu-servicio-al-cliente",
+            "position": 0,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(venta|inmobiliaria|ventas|Ventas Inmobiliarias)$",
+            "next": "greeting-frontapp",
+            "position": 1,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(Reporte de pago|reporte de pago|reporte|de|pago)$",
+            "next": "payment-report",
+            "position": 2,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(Cayalá Studio|cayalá studio|Cayalá studio|Cayalá|cayalá|Studio|studio)$",
+            "next": "greeting-frontapp",
+            "position": 3,
+            "delay": 2
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "ask-first-name",
+        "content": [
+          {
+            "type": "text",
+            "value": {
+              "text": "Podrias brindarme tu primer nombre"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^[A-Za-zÁÉÍÓÚáéíóúÑñÜü'-]{2,}$",
+            "next": "ask-last-name",
+            "delay": 2,
+            "variable_replace": {
+              "firstName": "{{context.userMessage.content.text}}"
+            }
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "ask-email",
+        "content": [
+          {
+            "type": "text",
+            "value": {
+              "text": "Ahora brindame tu correo electronico"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            "next": "menu",
+            "delay": 2,
+            "variable_replace": {
+              "userEmail": "{{context.userMessage.content.text}}"
+            }
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "menu-servicio-al-cliente",
+        "content": [
+          {
+            "type": "list",
+            "value": {
+              "sections": [
+                {
+                  "id": "menu de servicio al cliente",
+                  "rows": [
+                    {
+                      "id": "e1af6ab3-8bb4-45c6-94ec-6ddf4029d0b7",
+                      "title": "Residente",
+                      "description": ""
+                    },
+                    {
+                      "id": "0dc43b96-0482-43b3-88a5-f590883e68f9",
+                      "title": "Visitante",
+                      "description": ""
+                    },
+                    {
+                      "id": "795d8646-7bf2-438c-be0d-77d49da828b5",
+                      "title": "Socio Comercial",
+                      "description": ""
+                    },
+                    {
+                      "id": "9be4ff69-3689-4bcf-b941-d279f5b74419",
+                      "title": "Volver a menu",
+                      "description": ""
+                    }
+                  ]
+                }
+              ],
+              "header": {
+                "url": "",
+                "text": "",
+                "type": "text"
+              },
+              "bodyText": "Que servicio al cleinte necesitas",
+              "footerText": "",
+              "buttonText": "Ver opciones"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^(Residente|residente)$",
+            "next": "greeting-frontapp",
+            "position": 0,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(menu|volver|volver a menu)$",
+            "next": "menu",
+            "position": 1,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(Visitante|visitante)$",
+            "next": "greeting-frontapp",
+            "position": 2,
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(socio|comercial|Socio|Comercial|Socio Comercial|Socio comercial)$",
+            "next": "greeting-frontapp",
+            "position": 3,
+            "delay": 2
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "payment-report",
+        "content": [
+          {
+            "type": "button",
+            "value": {
+              "buttons": [
+                {
+                  "id": "bf052e9e-aa28-4ad8-ad81-fc8f00cb3922",
+                  "title": "Reporte de pagos"
+                },
+                {
+                  "id": "9ed0b60c-cdd8-49ce-86a1-cc4eae7f0ca3",
+                  "title": "Regresar a menu"
+                }
+              ],
+              "header": {
+                "url": "",
+                "text": "",
+                "type": "text"
+              },
+              "bodyText": "Escoge una de las siguientes opciones",
+              "footerText": ""
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^(reporte|de|pagos|Reporte de pagos|1)$",
+            "next": "manual-report-pdf",
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(menu|Regresar a menu|regresar)$",
+            "next": "menu",
+            "delay": 2
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "greeting-frontapp",
+        "content": [
+          {
+            "type": "text",
+            "value": {
+              "text": "En un momento un agente te atenderá"
+            }
+          }
+        ],
+        "transitions": [],
+        "transition_delay": -1
+      },
+      {
+        "key": "ask-last-name",
+        "content": [
+          {
+            "type": "text",
+            "value": {
+              "text": "Ahora un apellido"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^[A-Za-zÁÉÍÓÚáéíóúÑñÜü'-]{2,}$",
+            "next": "ask-email",
+            "delay": 2,
+            "variable_replace": {
+              "lastName": "{{context.userMessage.content.text}}"
+            }
+          }
+        ],
+        "transition_delay": -1
+      },
+      {
+        "key": "script-create-user",
+        "content": [],
+        "transitions": [
+          {
+            "type": "script",
+            "next": "menu",
+            "params": {
+              "script": "yumpii-bot-middleware-prod-executeEndpoint",
+              "params": {
+                "body": {
+                  "email": "{{context.userEmail}}",
+                  "firstname": "{{context.firstName}}",
+                  "lastname": "{{context.lastName}}",
+                  "phone": "{{context.userId}}",
+                  "validateContact": true,
+                  "userEmail": ""
+                },
+                "method": "POST",
+                "headers": {},
+                "endpoint": "https://api-mentor-gt-dev.mentorcuadrado.com/gt/cayala-sac/contact?type=HUBSPOT"
+              }
+            },
+            "variable_replace": {}
+          }
+        ],
+        "transition_delay": 0
+      },
+      {
+        "key": "manual-report-pdf",
+        "content": [
+
+          {
+            "type": "url_button",
+            "value": {
+              "header": {
+                "type": "document",
+                "text": "Te comparto un pdf",
+                "url": "https://images-support.s3.us-east-1.amazonaws.com/cayala/Manual+Reporte+de+Pagos.pdf"
+              },
+              "url": "https://cobros.cayala.com.gt/boletas/ReportarDeposito/",
+              "label": "Formulario",
+              "bodyText": "Te comparto un pdf con el instructivo para que puedas realizar el reporte de tu pago",
+              "footerText": ""
+            }
+          },
+          {
+            "type": "button",
+            "value": {
+              "buttons": [
+                {
+                  "id": "a6978823-173b-4125-9316-eaf8e68d904c",
+                  "title": "Si"
+                },
+                {
+                  "id": "2c2cc2ab-f7bd-4548-9583-06994a3a0c4a",
+                  "title": "No"
+                }
+              ],
+              "header": {
+                "url": "",
+                "text": "",
+                "type": "text"
+              },
+              "bodyText": "",
+              "footerText": ""
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "type": "regex",
+            "value": "^(manu|si|manu principal|Si|1)$",
+            "next": "menu",
+            "delay": 2
+          },
+          {
+            "type": "regex",
+            "value": "^(no|asesor|agente|hablar)$",
+            "next": "greeting-frontapp",
+            "delay": 2
+          }
+        ],
+        "transition_delay": -1
+      }
+    ],
+    "default": {
+      "text": "Lo siento, no comprendo lo que me enviaste. 😔\nIntentémoslo de nuevo o escribe *menú* para volver a comenzar..."
+    },
+    "globals": [
+      {
+        "keywords": [
+          "menu",
+          "menú",
+          "restart",
+          "comenzar",
+          "reiniciar"
+        ],
+        "stateKey": "menu"
+      },
+      {
+        "keywords": [
+          "cabron",
+          "chinga",
+          "chingan",
+          "chingas",
+          "chingon",
+          "chingada",
+          "chingadas",
+          "jode",
+          "jodes",
+          "jodidos",
+          "jodiendo",
+          "jodo",
+          "kulero",
+          "mamadas",
+          "mames",
+          "mams",
+          "mamon",
+          "mierda",
+          "mierda",
+          "mierdas",
+          "nimadres",
+          "pendeja",
+          "pendeja",
+          "pendejas",
+          "pendejo",
+          "pendejo",
+          "pendejos",
+          "pinche",
+          "pinches",
+          "ptm",
+          "puta",
+          "puta",
+          "putos",
+          "hdp",
+          "culero",
+          "putero",
+          "fuck",
+          "asshole",
+          "rateros",
+          "ratas",
+          "joto",
+          "joterias",
+          "joterias",
+          "caca",
+          "kaka",
+          "cagado",
+          "cagados",
+          "huevon",
+          "huevones",
+          "wevones",
+          "webones",
+          "webon",
+          "wevon",
+          "idiota",
+          "esperma",
+          "sperma",
+          "vagina",
+          "menstruacion",
+          "sexo",
+          "pucha",
+          "puchita",
+          "panocha",
+          "panochon",
+          "nepe",
+          "pito",
+          "pitos",
+          "pitero",
+          "putero",
+          "putas",
+          "puterias",
+          "puterias",
+          "puto",
+          "ratas",
+          "shinga",
+          "shingas",
+          "shingon",
+          "shingon",
+          "shit",
+          "spm",
+          "verga",
+          "cagar",
+          "cagas",
+          "chinga",
+          "chingas",
+          "chingada",
+          "chingado",
+          "chingadoo",
+          "chingalos",
+          "chingao",
+          "chingaos",
+          "chingar",
+          "chingarlos",
+          "chingarnos",
+          "chingarte",
+          "chingate",
+          "chingatelos",
+          "chingo",
+          "chingon",
+          "chinguen",
+          "chingon",
+          "chingalos",
+          "chingate",
+          "chingatelos",
+          "cancer",
+          "cancer",
+          "condon",
+          "condones",
+          "condón",
+          "cojon",
+          "cojon",
+          "culera",
+          "culeras",
+          "culero",
+          "culeros",
+          "culo",
+          "huebo",
+          "huebos",
+          "huevo",
+          "huevos",
+          "joder",
+          "madrear",
+          "mamada",
+          "mamadas",
+          "mamar",
+          "mamarracho",
+          "mamen",
+          "mames",
+          "mamez",
+          "mamon",
+          "mamon",
+          "maricon",
+          "mierda",
+          "mojon",
+          "ogete",
+          "ogetes",
+          "ojete",
+          "ojetes",
+          "pedorro",
+          "pendeja",
+          "pendejada",
+          "pendejadas",
+          "pendejas",
+          "pendejo",
+          "pinche",
+          "pinches",
+          "pinga",
+          "pito",
+          "pitos",
+          "puta",
+          "putas",
+          "putisima",
+          "putisimas",
+          "putisimo",
+          "putisimos",
+          "puto",
+          "putos",
+          "putisima",
+          "putisimas",
+          "putisimo",
+          "putisimos",
+          "puñal",
+          "puñales",
+          "puñetas",
+          "puñeta",
+          "shingaa",
+          "webo",
+          "webos",
+          "wevo",
+          "wevos",
+          "putazo",
+          "pendejo",
+          "pendeja",
+          "pendejos",
+          "pendejotes",
+          "pendejas",
+          "chingado",
+          "cabron",
+          "chinga",
+          "culera",
+          "mamar",
+          "mamen",
+          "kabron",
+          "jodido",
+          "pinches",
+          "pito",
+          "ratas",
+          "marika",
+          "rreputa",
+          "reputisima",
+          "cerote",
+          "punal",
+          "joder",
+          "idiota",
+          "estupido",
+          "estupido",
+          "mierda",
+          "putos",
+          "porno",
+          "nudes",
+          "desnudo",
+          "desnudos",
+          "pendejos",
+          "torpe",
+          "tonto",
+          "mamar",
+          "chingada",
+          "malditos",
+          "maldito",
+          "pendejos",
+          "tarado",
+          "masturbar",
+          "masturbando",
+          "masturbacion",
+          "masturbacion",
+          "masturbasion",
+          "marturbame",
+          "masturbame",
+          "masturvando",
+          "masturvar",
+          "masturbandome",
+          "masturvandome",
+          "chaqueta",
+          "chaqueteando",
+          "jalando",
+          "jalondomela",
+          "jalandomela",
+          "masturbandome",
+          "pajiando",
+          "pajas",
+          "paja",
+          "mestruar",
+          "menstruacion",
+          "menstruacion",
+          "menstruasion",
+          "menstruasion",
+          "tengo la regla",
+          "me vino",
+          "me vine",
+          "sexo",
+          "sexual",
+          "porno",
+          "coger",
+          "cojer",
+          "cogida",
+          "cojida",
+          "semen",
+          "pene",
+          "culo",
+          "culos",
+          "ano",
+          "nalga",
+          "nalgas",
+          "seno",
+          "senos",
+          "chiche",
+          "chiches",
+          "chichi",
+          "chichis",
+          "pechos",
+          "tetas",
+          "ubres",
+          "teta",
+          "caca",
+          "orinar",
+          "fisting",
+          "tonta",
+          "mensa",
+          "pendeja",
+          "wawis",
+          "clitoris",
+          "panocha",
+          "bizcocho",
+          "biscocho",
+          "perra",
+          "zorra",
+          "chupamela",
+          "gorda"
+        ],
+        "stateKey": "insult"
+      }
+    ],
+    "business_hours": []
+  }
+}

@@ -10,21 +10,35 @@ interface EndNodeProps {
 }
 
 export const EndNode: React.FC<EndNodeProps> = ({ data, selected }) => {
+  const isHighlighted = data.highlighted;
+  
   return (
     <Card 
       sx={{ 
         minWidth: 200,
-        boxShadow: selected ? 4 : 2,
-        border: selected ? 2 : 1,
-        borderColor: selected ? 'error.main' : 'divider',
+        boxShadow: isHighlighted ? 6 : (selected ? 4 : 2),
+        border: isHighlighted ? 3 : (selected ? 2 : 1),
+        borderColor: isHighlighted ? '#ff5722' : (selected ? 'error.main' : 'divider'),
         background: 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)',
+        animation: isHighlighted ? 'pulse 1.5s ease-in-out infinite' : 'none',
+        '@keyframes pulse': {
+          '0%': {
+            boxShadow: `0 0 0 0 rgba(255, 87, 34, 0.7)`,
+          },
+          '70%': {
+            boxShadow: `0 0 0 10px rgba(255, 87, 34, 0)`,
+          },
+          '100%': {
+            boxShadow: `0 0 0 0 rgba(255, 87, 34, 0)`,
+          },
+        },
       }}
     >
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
           <Stop color="error" />
           <Typography variant="h6" component="div" color="error.main">
-            Fin
+
           </Typography>
           <Chip 
             label="End" 

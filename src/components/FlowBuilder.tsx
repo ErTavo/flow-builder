@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Node,
@@ -44,8 +44,7 @@ import type {
   EditorFlow,
   YumpiiFlow,
   GlobalKeyword,
-  BusinessHour,
-  TextValue 
+  BusinessHour
 } from '../types/flow';
 
 // Material UI theme
@@ -83,6 +82,25 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
   const [importError, setImportError] = useState<string | null>(null);
   const [searchDialogOpen, setSearchDialogOpen] = useState(false);
   const [navigationTarget, setNavigationTarget] = useState<string | null>(null);
+  const [highlightedNodeId, setHighlightedNodeId] = useState<string | null>(null);
+  const highlightTimeoutRef = useRef<number | null>(null);
+
+  // Update nodes highlight state
+  const updateHighlightState = useCallback((nodeIdToHighlight: string | null) => {
+    setNodes(currentNodes => 
+      currentNodes.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          highlighted: node.id === nodeIdToHighlight
+        }
+      }))
+    );
+  }, [setNodes]);
+
+  useEffect(() => {
+    updateHighlightState(highlightedNodeId);
+  }, [highlightedNodeId, updateHighlightState]);
 
   // localStorage utility functions
   const saveToLocalStorage = useCallback((
@@ -196,6 +214,14 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
   const handleSelectNode = useCallback((nodeId: string) => {
     const node = nodes.find(n => n.id === nodeId);
     if (node) {
+      // Clear any existing highlight timeout
+      if (highlightTimeoutRef.current) {
+        clearTimeout(highlightTimeoutRef.current);
+      }
+      
+      // Highlight the node temporarily
+      setHighlightedNodeId(nodeId);
+      
       // Select the node in state
       setSelectedNode(node as EditorNode);
       setActiveTab(0); // Switch to Properties tab
@@ -203,10 +229,17 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
       
       // Store the node ID for the NavigationHelper component
       setNavigationTarget(nodeId);
+      
+      // Remove highlight after 3 seconds
+      highlightTimeoutRef.current = window.setTimeout(() => {
+        setHighlightedNodeId(null);
+        highlightTimeoutRef.current = null;
+      }, 3000);
     }
   }, [nodes]);
 
   const addNode = useCallback(() => {
+    const keyValue = `estado-${Date.now()}`;
     const newNode: EditorNode = {
       id: `step-${Date.now()}`,
       type: 'step',
@@ -215,8 +248,8 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
         y: Math.random() * 400 + 200 
       },
       data: {
-        label: 'Nuevo Estado',
-        key: `estado-${Date.now()}`,
+        label: keyValue,
+        key: keyValue,
         stepType: 'message',
         content: [],
         transitions: [],
@@ -254,6 +287,70 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
       })
     );
   }, [setNodes]);
+
+  // Función para actualizar todas las transiciones cuando cambia un key
+  const updateAllTransitions = useCallback((oldKey: string, newKey: string) => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.data.transitions) {
+          // Actualizar transiciones que apunten al key antiguo
+          const updatedTransitions = node.data.transitions.map((transition) => {
+            if (transition.next === oldKey) {
+              return { ...transition, next: newKey };
+            }
+            return transition;
+          });
+          
+          // Solo actualizar si hubo cambios
+          if (JSON.stringify(updatedTransitions) !== JSON.stringify(node.data.transitions)) {
+            return { 
+              ...node, 
+              data: { 
+                ...node.data, 
+                transitions: updatedTransitions 
+              } 
+            };
+          }
+        }
+        return node;
+      })
+    );
+  }, [setNodes]);
+
+  // Función para duplicar un nodo
+  const duplicateNode = useCallback((nodeId: string) => {
+    const nodeToDuplicate = nodes.find(n => n.id === nodeId);
+    if (!nodeToDuplicate) return;
+
+    // Generar un nuevo ID y key único
+    const newNodeId = `node-${Date.now()}`;
+    const originalKey = nodeToDuplicate.data.key as string;
+    const newKey = `${originalKey}_copia_${Date.now().toString().slice(-6)}`;
+
+    // Crear el nuevo nodo con todos los datos duplicados
+    const newNode: EditorNode = {
+      id: newNodeId,
+      type: nodeToDuplicate.type as 'start' | 'step' | 'end',
+      position: { 
+        x: nodeToDuplicate.position.x + 200, // Offset hacia la derecha
+        y: nodeToDuplicate.position.y + 50   // Offset hacia abajo
+      },
+      data: {
+        ...nodeToDuplicate.data,
+        key: newKey,
+        label: newKey,
+        isEntry: false // El duplicado nunca debe ser nodo de entrada
+      }
+    };
+
+    // Agregar el nuevo nodo
+    setNodes((nds) => [...nds, newNode]);
+
+    // Seleccionar el nuevo nodo
+    setSelectedNode(newNode);
+
+    console.log(`Nodo duplicado: ${originalKey} → ${newKey}`);
+  }, [nodes, setNodes, setSelectedNode]);
 
   const syncTransitionsToCanvas = useCallback(() => {
     // Update node types based on current state
@@ -344,6 +441,16 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
 
   const importYumpiiFlow = useCallback((jsonData: string) => {
     try {
+      // Limpiar todo antes de importar
+      clearLocalStorage();
+      setNodes([]);
+      setEdges([]);
+      setGlobals([]);
+      setBusinessHours([]);
+      setSelectedNode(null);
+      setActiveTab(0);
+      setImportError(null);
+      
       const yumpiiFlow: YumpiiFlow = JSON.parse(jsonData);
       
       if (!yumpiiFlow.structure) {
@@ -371,9 +478,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
             y: Math.floor(index / 5) * 200 + 100 
           },
           data: {
-            label: state.content.length > 0 && state.content[0].type === 'text' 
-              ? (state.content[0].value as TextValue)?.text?.substring(0, 50) || state.key
-              : state.key,
+            label: state.key,
             key: state.key,
             stepType: nodeType === 'step' ? stepType : undefined,
             content: state.content,
@@ -421,7 +526,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
       console.error('Error importing flow:', error);
       setImportError(error instanceof Error ? error.message : 'Error desconocido al importar el archivo');
     }
-  }, [setNodes, setEdges, onFlowChange, applyAutoLayout]);
+  }, [setNodes, setEdges, onFlowChange, applyAutoLayout, clearLocalStorage]);
 
   const exportYumpiiFlow = useCallback((): YumpiiFlow => {
     // Convert editor nodes back to format
@@ -494,8 +599,10 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
               setNodes([]);
               setEdges([]);
               setGlobals([]);
+              setBusinessHours([]);
               setSelectedNode(null);
               setActiveTab(0);
+              setImportError(null);
             }}
           />
         </Box>
@@ -617,6 +724,9 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
                     label: n.data.label 
                   }))}
                   onSyncTransitions={syncTransitionsToCanvas}
+                  currentEntryNodeKey={nodes.find(n => n.data.isEntry)?.data.key as string}
+                  onUpdateAllTransitions={updateAllTransitions}
+                  onDuplicateNode={duplicateNode}
                 />
               )}
               
