@@ -17,12 +17,12 @@ import {
   AccountTree,
   Search,
 } from '@mui/icons-material';
-import type { YumpiiFlow } from '../types/flow';
+import type { BotFlow } from '../types/flow';
 
 interface ToolbarProps {
   onAddNode: () => void;
   onImportFlow: (jsonData: string) => void;
-  onExportFlow: () => YumpiiFlow;
+  onExportFlow: () => BotFlow;
   onTogglePanel: () => void;
   onClearProgress?: () => void;
   onAutoLayout?: () => void;

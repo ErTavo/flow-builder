@@ -1,8 +1,8 @@
 // Bot Controller Flow Types
-export interface YumpiiFlow {
+export interface BotFlow {
   structure: {
     entry: string;
-    states: YumpiiState[];
+    states: BotState[];
     default: {
       text: string;
     };
@@ -11,10 +11,10 @@ export interface YumpiiFlow {
   };
 }
 
-export interface YumpiiState {
+export interface BotState {
   key: string;
   content: Content[];
-  transitions: YumpiiTransition[];
+  transitions: BotTransition[];
   transition_delay: number;
 }
 
@@ -91,7 +91,7 @@ export interface ListRow {
   description?: string;
 }
 
-export interface YumpiiTransition {
+export interface BotTransition {
   next: string;
   type: 'auto' | 'contains' | 'exact' | 'script' | 'regex';
   delay?: number;
@@ -154,7 +154,7 @@ export interface EditorNodeData extends Record<string, unknown> {
   key: string;
   stepType?: 'message' | 'button' | 'condition' | 'script' | 'delay';
   content?: Content[];
-  transitions?: YumpiiTransition[];
+  transitions?: BotTransition[];
   transition_delay?: number;
   isEntry?: boolean;
   variable_replace?: Record<string, string | number | boolean>;
@@ -164,7 +164,7 @@ export interface EditorNodeData extends Record<string, unknown> {
 export interface EditorFlow {
   nodes: EditorNode[];
   edges: EditorEdge[];
-  yumpiiData?: YumpiiFlow;
+  flowData?: BotFlow;
 }
 
 export interface EditorEdge {
@@ -203,6 +203,6 @@ export interface State {
   condition?: string;
   input_type?: string;
   actions?: Action[];
-  transitions?: YumpiiTransition[];
+  transitions?: BotTransition[];
   transition_delay?: number;
 }

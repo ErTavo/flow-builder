@@ -42,7 +42,7 @@ import type {
   EditorNode, 
   EditorEdge, 
   EditorFlow,
-  YumpiiFlow,
+  BotFlow,
   GlobalKeyword,
   BusinessHour
 } from '../types/flow';
@@ -439,7 +439,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
     return layoutedNodes;
   }, []);
 
-  const importYumpiiFlow = useCallback((jsonData: string) => {
+  const importBotFlow = useCallback((jsonData: string) => {
     try {
       // Limpiar todo antes de importar
       clearLocalStorage();
@@ -451,15 +451,15 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
       setActiveTab(0);
       setImportError(null);
       
-      const yumpiiFlow: YumpiiFlow = JSON.parse(jsonData);
+      const botFlow: BotFlow = JSON.parse(jsonData);
       
-      if (!yumpiiFlow.structure) {
+      if (!botFlow.structure) {
         throw new Error('El archivo no tiene la estructura de válida');
       }
 
       // Convert states to editor nodes
-      const convertedNodes: EditorNode[] = yumpiiFlow.structure.states.map((state, index) => {
-        const isEntry = state.key === yumpiiFlow.structure.entry;
+      const convertedNodes: EditorNode[] = botFlow.structure.states.map((state, index) => {
+        const isEntry = state.key === botFlow.structure.entry;
         const nodeType = isEntry ? 'start' : 
                         state.transitions.length === 0 ? 'end' : 'step';
         
@@ -491,7 +491,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
 
       // Convert transitions to edges
       const convertedEdges: EditorEdge[] = [];
-      yumpiiFlow.structure.states.forEach((state) => {
+      botFlow.structure.states.forEach((state) => {
         state.transitions.forEach((transition, index) => {
           if (transition.next) {
             convertedEdges.push({
@@ -509,8 +509,8 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
 
       setNodes(layoutedNodes);
       setEdges(convertedEdges);
-      setGlobals(yumpiiFlow.structure.globals || []);
-      setBusinessHours(yumpiiFlow.structure.business_hours || []);
+      setGlobals(botFlow.structure.globals || []);
+      setBusinessHours(botFlow.structure.business_hours || []);
       setImportError(null);
 
       // Notify parent component
@@ -518,7 +518,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
         onFlowChange({
           nodes: layoutedNodes,
           edges: convertedEdges,
-          yumpiiData: yumpiiFlow,
+          flowData: botFlow,
         });
       }
 
@@ -528,9 +528,9 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
     }
   }, [setNodes, setEdges, onFlowChange, applyAutoLayout, clearLocalStorage]);
 
-  const exportYumpiiFlow = useCallback((): YumpiiFlow => {
+  const exportBotFlow = useCallback((): BotFlow => {
     // Convert editor nodes back to format
-    const yumpiiStates = nodes.map((node) => ({
+    const botStates = nodes.map((node) => ({
       key: node.data.key,
       content: node.data.content || [],
       transitions: node.data.transitions || [],
@@ -542,7 +542,7 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
     return {
       structure: {
         entry: entryNode?.data.key || 'init',
-        states: yumpiiStates,
+        states: botStates,
         default: {
           text: 'Lo siento, no comprendo lo que me enviaste. 😔\nIntentémoslo de nuevo o escribe *menú* para volver a comenzar...',
         },
@@ -589,8 +589,8 @@ export const FlowBuilder: React.FC<FlowBuilderProps> = ({ onFlowChange }) => {
         }}>
           <Toolbar
             onAddNode={addNode}
-            onImportFlow={importYumpiiFlow}
-            onExportFlow={() => exportYumpiiFlow()}
+            onImportFlow={importBotFlow}
+            onExportFlow={() => exportBotFlow()}
             onTogglePanel={() => setRightDrawerOpen(!rightDrawerOpen)}
             onAutoLayout={handleAutoLayout}
             onOpenSearch={handleOpenSearch}

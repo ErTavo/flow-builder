@@ -38,7 +38,7 @@ import {
   Code as CodeIcon,
   ContentCopy as CopyIcon,
 } from '@mui/icons-material';
-import type { EditorNode, YumpiiTransition, TextValue, ButtonValue, UrlButtonValue, MediaValue, DocumentValue, ListValue, ListSection } from '../types/flow';
+import type { EditorNode, BotTransition, TextValue, ButtonValue, UrlButtonValue, MediaValue, DocumentValue, ListValue, ListSection } from '../types/flow';
 import { generateButtonId, generateListRowId, generateListSectionId } from '../utils/uuid';
 
 // Componente personalizado para textarea con mejor manejo de scroll
@@ -323,7 +323,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       transitionValue = `^(${escapedVariations.join('|')})$`;
     }
 
-    const updatedTransitions: YumpiiTransition[] = [...currentTransitions, {
+    const updatedTransitions: BotTransition[] = [...currentTransitions, {
       type: transitionType as 'auto' | 'contains' | 'exact' | 'script' | 'regex',
       value: transitionValue,
       next: newTransition.targetState,
@@ -403,7 +403,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       // Determinar el tipo: si venimos de una transición auto con script, usar 'auto', sino 'script'
       const transitionType = newTransition.type === 'auto' && newTransition.useScript ? 'auto' : 'script';
       
-      const scriptTransition: YumpiiTransition = {
+      const scriptTransition: BotTransition = {
         type: transitionType,
         next: scriptConfig.targetState,
         params: {
@@ -584,7 +584,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
   };
 
   // Función para generar descripción legible de transiciones
-  const getTransitionDisplayText = (transition: YumpiiTransition) => {
+  const getTransitionDisplayText = (transition: BotTransition) => {
     switch (transition.type) {
       case 'regex':
         return 'Expresión regular';
@@ -1543,7 +1543,7 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
               fullWidth
               size="small"
               sx={{ mb: 2 }}
-              helperText="Nombre del script a ejecutar (ej: yumpii-bot-middleware-prod-executeEndpoint)"
+              helperText="Nombre del script a ejecutar (ej: bot-middleware-prod-executeEndpoint)"
             />
 
             <TextField
